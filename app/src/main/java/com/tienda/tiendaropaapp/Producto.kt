@@ -13,6 +13,7 @@ data class Producto(
     val pventa: String,       // ❗ "6000" → String
     val observacion: String?,
     val imagen: String?,
+    val imagen_url: String?,
     val impuesto: Int,
     val categoriaproducto: CategoriaProducto,
     val unidaddemedida: UnidadDeMedida

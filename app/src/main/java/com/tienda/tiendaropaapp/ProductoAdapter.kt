@@ -1,16 +1,20 @@
 package com.tienda.tiendaropaapp
 
-import android.content.Context
+
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import coil.transform.RoundedCornersTransformation
+
 
 class ProductoAdapter(
     private var productos: List<Producto>,
@@ -25,6 +29,7 @@ class ProductoAdapter(
         val tvPrecio: TextView = view.findViewById(R.id.tvPrecio)
         val tvCategoria: TextView = view.findViewById(R.id.tvCategoria)
         val tvStock: TextView = view.findViewById(R.id.tvStock)
+        val ivImagen: ImageView = view.findViewById(R.id.ivImagen)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductoViewHolder {
@@ -37,12 +42,33 @@ class ProductoAdapter(
         val producto = productosFiltrados[position]
         val context = holder.itemView.context
 
+        // ✅ Textos
         holder.tvDescripcion.text = producto.descripcion
-        holder.tvCodigo.text = "Código: ${producto.codigo}"
+        holder.tvCodigo.text = "Código: ${producto.imagen_url}"
         holder.tvPrecio.text = "Venta: \$${producto.pventa}"
         holder.tvCategoria.text = "Categoría: ${producto.categoriaproducto.descripcion}"
         holder.tvStock.text = "Stock: ${producto.stock}"
 
+        // ✅ Cargar imagen con Coil
+        // Dentro de onBindViewHolder, después de asignar los textos...
+
+        val imageUrl: String? = producto.imagen_url
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() && it.startsWith("http") }
+        println("URL de imagen para ${producto.descripcion}: $imageUrl")
+        if (imageUrl != null) {
+            // ✅ URL válida: cargar con Coil
+            holder.ivImagen.load(imageUrl ?: "") {
+                placeholder(R.drawable.image_placeholder_background)
+                error(R.drawable.image_placeholder_background)
+                transformations(RoundedCornersTransformation(8f))
+            }
+        } else {
+            // ❌ No hay URL válida: mostrar solo el placeholder de "sin imagen"
+            holder.ivImagen.setImageResource(R.drawable.image_placeholder_no_image)
+        }
+
+        // ✅ Estilos según stock
         val stock = producto.stock.toSafeDouble()
         val tieneStock = stock > 0
 
@@ -64,6 +90,7 @@ class ProductoAdapter(
             }
         )
 
+        // ✅ Clic
         holder.itemView.setOnClickListener {
             try {
                 onProductoClick(producto)
