@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_700">#6200EE</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="fondo_stock_disponible">#E8F5E9</color> <!-- Verde claro -->
+    <color name="fondo_stock_agotado">#FFEBEE</color>    <!-- Rojo claro -->
+
+    <color name="texto_stock_bueno">#1B5E20</color>     <!-- Verde más oscuro -->
+    <color name="texto_stock_agotado">#C62828</color>   <!-- Rojo oscuro -->
+    <!-- Colores para clientes -->
+    <color name="fondo_claro">#F8F9FA</color>        <!-- Gris muy claro -->
+    <color name="card_cliente">#FFFFFF</color>        <!-- Blanco puro -->
+    <color name="texto_primario">#212121</color>      <!-- Negro suave -->
+    <color name="texto_terciario">#9E9E9E</color>     <!-- Gris claro -->
+    <!-- Colores modernos para clientes -->
+    <color name="fondo_pantalla">#F8F9FA</color>
+    <color name="card_fondo">#FFFFFF</color>
+    <color name="color_acento_oscuro">#388E3C</color>
+    <color name="borde_buscador">#E0E0E0</color>
+    <!-- Colores para productos -->
+    <color name="card_producto">#FFFFFF</color>
+    <color name="fondo_pantalla_productos">#F5F7FA</color>
+    <color name="texto_precio">#2B6CB0</color>
+    <color name="texto_categoria">#48BB78</color>
+    <!-- Colores para texto oscuro -->
+    <color name="texto_titulo">#2D3748</color>      <!-- Gris oscuro -->
+    <color name="texto_secundario">#718096</color>  <!-- Gris medio -->
+
+    <!-- Fondo de la barra -->
+    <color name="fondo_toolbar">#FFFFFF</color>
+
+    <!-- Tu color de acento (verde) -->
+    <color name="color_acento">#4CAF50</color>
+</resources>
