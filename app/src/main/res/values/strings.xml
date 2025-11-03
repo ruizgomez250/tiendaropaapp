@@ -2,5 +2,10 @@
     <string name="app_name">TiendaRopaApp</string>
     <string name="navigation_drawer_open">Abrir menú</string>
     <string name="navigation_drawer_close">Cerrar menú</string>
+    <string name="format_image_url">Imagen: %s</string>
+
     <string name="format_codigo">Código: %s</string>
+    <string name="format_precio_venta">Venta: $%s</string>
+    <string name="format_categoria">Categoría: %s</string>
+    <string name="format_stock">Stock: %s</string>
 </resources>

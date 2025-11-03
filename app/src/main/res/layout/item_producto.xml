@@ -9,19 +9,20 @@
     app:cardElevation="3dp"
     app:cardBackgroundColor="@color/card_producto">
 
-    <!-- Contenedor horizontal -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <!-- Contenido de texto (ocupa el espacio restante) -->
+        <!-- ✅ ZONA IZQUIERDA: Datos del producto (clic → vender) -->
         <LinearLayout
+            android:id="@+id/container_datos"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="?attr/selectableItemBackground">
 
             <TextView
                 android:id="@+id/tvDescripcion"
@@ -64,7 +65,7 @@
 
         </LinearLayout>
 
-        <!-- Imagen a la derecha -->
+        <!-- ✅ ZONA DERECHA: Imagen (clic → agrandar) -->
         <ImageView
             android:id="@+id/ivImagen"
             android:layout_width="72dp"
@@ -72,7 +73,10 @@
             android:layout_marginStart="12dp"
             android:scaleType="centerCrop"
             android:background="@drawable/image_placeholder_background"
-            android:contentDescription="Imagen del producto" />
+            android:contentDescription="Imagen del producto"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless" />
 
     </LinearLayout>
 

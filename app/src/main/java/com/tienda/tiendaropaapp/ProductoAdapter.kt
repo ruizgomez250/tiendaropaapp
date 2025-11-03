@@ -1,6 +1,6 @@
 package com.tienda.tiendaropaapp
 
-
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +10,11 @@ import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
-
 
 class ProductoAdapter(
     private var productos: List<Producto>,
@@ -30,6 +30,7 @@ class ProductoAdapter(
         val tvCategoria: TextView = view.findViewById(R.id.tvCategoria)
         val tvStock: TextView = view.findViewById(R.id.tvStock)
         val ivImagen: ImageView = view.findViewById(R.id.ivImagen)
+        val containerDatos: View = view.findViewById(R.id.container_datos)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductoViewHolder {
@@ -42,30 +43,23 @@ class ProductoAdapter(
         val producto = productosFiltrados[position]
         val context = holder.itemView.context
 
-        // ✅ Textos
+        // ✅ Textos con strings localizables
         holder.tvDescripcion.text = producto.descripcion
-        holder.tvCodigo.text = "Código: ${producto.imagen_url}"
-        holder.tvPrecio.text = "Venta: \$${producto.pventa}"
-        holder.tvCategoria.text = "Categoría: ${producto.categoriaproducto.descripcion}"
-        holder.tvStock.text = "Stock: ${producto.stock}"
+        holder.tvCodigo.text = context.getString(R.string.format_codigo, producto.codigo)
+        holder.tvPrecio.text = context.getString(R.string.format_precio_venta, producto.pventa)
+        holder.tvCategoria.text = context.getString(R.string.format_categoria, producto.categoriaproducto.descripcion)
+        holder.tvStock.text = context.getString(R.string.format_stock, producto.stock)
 
         // ✅ Cargar imagen con Coil
-        // Dentro de onBindViewHolder, después de asignar los textos...
-
         val imageUrl: String? = producto.imagen_url
             ?.trim()
             ?.takeIf { it.isNotEmpty() && it.startsWith("http") }
-        println("URL de imagen para ${producto.descripcion}: $imageUrl")
-        if (imageUrl != null) {
-            // ✅ URL válida: cargar con Coil
-            holder.ivImagen.load(imageUrl ?: "") {
-                placeholder(R.drawable.image_placeholder_background)
-                error(R.drawable.image_placeholder_background)
-                transformations(RoundedCornersTransformation(8f))
-            }
-        } else {
-            // ❌ No hay URL válida: mostrar solo el placeholder de "sin imagen"
-            holder.ivImagen.setImageResource(R.drawable.image_placeholder_no_image)
+
+        holder.ivImagen.load(imageUrl) {
+
+            placeholder(R.drawable.image_placeholder_background)
+            error(R.drawable.image_placeholder_background)
+            transformations(RoundedCornersTransformation(8f))
         }
 
         // ✅ Estilos según stock
@@ -90,17 +84,30 @@ class ProductoAdapter(
             }
         )
 
-        // ✅ Clic
-        holder.itemView.setOnClickListener {
+        holder.itemView.alpha = if (tieneStock) 1.0f else 0.6f
+
+        // 🔥 Clic en ZONA DE DATOS → vender
+        holder.containerDatos.setOnClickListener {
             try {
                 onProductoClick(producto)
             } catch (e: Exception) {
                 Log.e("CLICK_ERROR", "Error al hacer clic en producto", e)
-                Toast.makeText(it.context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
 
-        holder.itemView.alpha = if (tieneStock) 1.0f else 0.6f
+        // 🔥 Clic en IMAGEN → agrandar
+        holder.ivImagen.setOnClickListener {
+            val urlParaAgrandar = producto.imagen_url
+                ?.trim()
+                ?.takeIf { it.isNotEmpty() && it.startsWith("http") }
+
+            if (!urlParaAgrandar.isNullOrEmpty()) {
+                agrandarImagen(context, urlParaAgrandar)
+            } else {
+                Toast.makeText(context, "No hay imagen disponible", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun getItemCount() = productosFiltrados.size
@@ -132,5 +139,29 @@ class ProductoAdapter(
                 notifyDataSetChanged()
             }
         }
+    }
+
+    // ✅ Mostrar imagen en grande
+    private fun agrandarImagen(context: Context, imageUrl: String) {
+        Log.d("ImagenAgrandar", "URL al hacer clic: $imageUrl")
+        val imageView = ImageView(context).apply {
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            adjustViewBounds = true // ✅ Importante: ajusta proporción
+            setMaxWidth((context.resources.displayMetrics.widthPixels * 0.9f).toInt())
+            setMaxHeight((context.resources.displayMetrics.heightPixels * 0.8f).toInt())
+            load(imageUrl) {
+                placeholder(R.drawable.image_placeholder_background)
+                error(R.drawable.image_placeholder_background)
+            }
+            // Agregar márgenes (opcional pero mejora la UX)
+            val margin = (24 * context.resources.displayMetrics.density).toInt()
+            setPadding(margin, margin, margin, margin)
+        }
+
+        AlertDialog.Builder(context)
+            .setView(imageView)
+            .setPositiveButton("Cerrar") { dialog, _ -> dialog.dismiss() }
+            .setCancelable(true)
+            .show()
     }
 }
